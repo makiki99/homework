@@ -3,8 +3,8 @@
 
 #declare cam = array[1]{
     camera {
-        location <30,10,-50>
-        look_at <30,10,0>
+        location <0,10,-50>
+        look_at <0,10,0>
     }
 }
 
@@ -19,8 +19,9 @@ camera {cam[0]}
 //kolorki/tekstury
 #declare c_wall = texture {pigment {rgb <1.000, 0.871, 0.678>}}
 #declare c_wall_alt = texture {pigment {rgb <1, 1, 1>}}
-#declare c_roof = texture {pigment {rgb <0.8, 0, 0>}} //todo
-#declare c_metal = texture {pigment {rgb <0.1, 0.1, 0.1>}} //todo
+#declare c_roof = texture {pigment {rgb <0.8, 0, 0>}}
+#declare c_metal = texture {pigment {rgb <0.1, 0.1, 0.1>}}
+#declare c_grass = texture {pigment {rgb <0.1, 0.1, 0.1>}}
 
 
 sphere {<0,0,0>,10000 pigment {color Blue}}
@@ -35,10 +36,21 @@ plane {
 }
 
 union {
-    box {
+    union {
         //random stuff behind
-        <0,0,0>,<5,10,-5>
-        texture {c_wall}
+        box {
+            <0,0,0>,<5,10,-5>
+            texture {c_wall}
+        }
+        prism {
+            conic_sweep
+            0,1,5,
+            <-2.5,-2.5>,<2.5,-2.5>,<2.5,2.5>,<-2.5,2.5>,<-2.5,-2.5>
+            scale <1,2,1>
+            rotate x*180 
+            translate <2.5,12,-2.5>
+            texture {c_roof} 
+        }
         translate <-2,0,1>
     }
     union {
@@ -107,19 +119,59 @@ union {
         translate <2,0,-5>
     }
     union {
+        //important definitions
+        #declare window_slots = union {
+            box {
+                <0,9.5,-4.5>,<1.5,7.75,-5>
+            }
+            box {
+                <0,6.5,-4.5>,<1.5,4.25,-5>
+            }
+            box {
+                <0,3,-4.5>,<1.5,1.25,-5>
+            }
+            
+            //texture {c_wall_roof}
+        }
+        #declare window_fills = union {
+            box {
+                <0,9.5,-4.5>,<1.5,7.75,-4.75>
+            }
+            box {
+                <0,6.5,-4.5>,<1.5,4.25,-4.75>
+            }
+            box {
+                <0,3,-4.5>,<1.5,1.25,-4.75>
+            }
+            texture {c_wall_alt}
+            //todo: fix dem fills because wtf
+        }
         //x-aligned walls
         union {
-            box {
-                <0,0,0>,<10,10,-5>
-                texture {c_wall}
+            difference {
+                union {
+                    box {
+                        <0,0,0>,<10,10,-5>
+                        texture {c_wall}
+                    }
+                    prism {
+                        0,10,4
+                        <0,0>,<0,5>,<2,2.5>,<0,0>
+                        texture {c_roof}
+                        rotate z*90
+                        rotate y*180
+                        translate y*10
+                    }
+                }
+                //wijndow slot prep
+                object {
+                    window_slots
+                    translate x*5.5
+                }
             }
-            prism {
-                0,10,4
-                <0,0>,<0,5>,<2,2.5>,<0,0>
-                texture {c_roof}
-                rotate z*90
-                rotate y*180
-                translate y*10
+            object {
+                window_fills
+                translate x*5.5
             }
         }
         union {
@@ -129,7 +181,7 @@ union {
             }
             prism {
                 0,25,4
-                <0,-1>,<0,5>,<2,2>,<0,-1>
+                <0,1>,<0,5.5>,<2,2.75>,<0,-1>
                 texture {c_roof}
                 rotate z*90
                 rotate y*180
@@ -143,7 +195,7 @@ union {
                 texture {c_wall}
             }
             prism {
-                2,6,4
+                2.75,6,4
                 <0,0>,<0,5>,<2,2.5>,<0,0>
                 texture {c_roof}
                 rotate z*90
@@ -158,7 +210,7 @@ union {
                 texture {c_wall}
             }
             prism {
-                2,6,4
+                2.75,6,4
                 <0,0>,<0,5>,<2,2.5>,<0,0>
                 texture {c_roof}
                 rotate z*90
@@ -171,27 +223,63 @@ union {
     }
     union {
         //unaligned walls
-        box {
-            <0,0,0>,<15,8,5>
-            texture {c_wall}
+        union {
+            box {
+                <0,0,0>,<15,8,5>
+                texture {c_wall}
+            }
+            prism {
+                0,-15,4
+                <0,0>,<0,5>,<2,2.5>,<0,0>
+                texture {c_roof}
+                rotate z*90
+                translate y*8
+            }
             rotate y*135
             translate <0,0,0>
         }
-        box {
-            <0,0,0>,<10,8,5.5>
-            texture {c_wall}
+        union {
+            box {
+                <0,0,0>,<10,8,5.5>
+                texture {c_wall}
+            }
+            prism {
+                0,-10,4
+                <0,0>,<0,5.5>,<2,2.75>,<0,0>
+                texture {c_roof}
+                rotate z*90
+                translate y*8
+            }
             rotate y*125
             translate <15*cosd(-135),0,15*sind(-135)>
         }
-        box {
-            <0,0,0.5>,<6,8,5>
-            texture {c_wall}
+        union {
+            box {
+                <0,0,0.5>,<6,8,5>
+                texture {c_wall}
+            }
+            prism {
+                0,-6,4
+                <0,0.5>,<0,5>,<2,2.75>,<0,0>
+                texture {c_roof}
+                rotate z*90
+                translate y*8
+            }
             rotate y*125
             translate <15*cosd(-135)+10*cosd(-125),0,15*sind(-135)+10*sind(-125)>
-        }                            
-        box {
-            <0,0,-0.5>,<8,8,6>
-            texture {c_wall}
+        }
+        union {                            
+            box {
+                <0,0,-0.5>,<8,8,6>
+                texture {c_wall}
+            }
+            prism {
+                0,-8,4
+                <0,-0.5>,<0,6>,<2,2.75>,<0,0>
+                texture {c_roof}
+                rotate z*90
+                translate y*8
+            }
             rotate y*125
             translate <15*cosd(-135)+16*cosd(-125),0,15*sind(-135)+16*sind(-125)>
         }
