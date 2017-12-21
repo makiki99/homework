@@ -3,8 +3,8 @@
 
 #declare cam = array[1]{
     camera {
-        location <0,10,-50>
-        look_at <0,10,0>
+        location <10,10,-30>
+        look_at <5,10,0>
     }
 }
 
@@ -17,11 +17,17 @@ global_settings { ambient_light <1,1,1> }
 camera {cam[0]}
 
 //kolorki/tekstury
-#declare c_wall = texture {pigment {rgb <1.000, 0.871, 0.678>}}
+#declare c_wall = texture {
+    pigment {rgb <1.000, 0.871, 0.678>}
+    normal {pigment_pattern{wrinkles turbulence 0.2 scale 0.5},0.06}
+}
 #declare c_wall_alt = texture {pigment {rgb <1, 1, 1>}}
-#declare c_roof = texture {pigment {rgb <0.8, 0, 0>}}
+#declare c_roof = texture {
+    pigment {rgb <0.8, 0, 0>}
+}
 #declare c_metal = texture {pigment {rgb <0.1, 0.1, 0.1>}}
 #declare c_grass = texture {pigment {rgb <0.1, 0.1, 0.1>}}
+#declare c_window = texture {pigment {rgb <0, 1, 1>}}
 
 
 sphere {<0,0,0>,10000 pigment {color Blue}}
@@ -119,33 +125,54 @@ union {
         translate <2,0,-5>
     }
     union {
+    
+    
         //important definitions
+        #declare window_slot_small = box {
+            <0,0,0>,<1.5,1.75,-0.5>
+        }
+        #declare window_slot_big = box {
+            <0,0,0>,<1.5,2.25,-0.5>
+        }
         #declare window_slots = union {
-            box {
-                <0,9.5,-4.5>,<1.5,7.75,-5>
+            object {
+                window_slot_small
+                translate y*7.75
             }
-            box {
-                <0,6.5,-4.5>,<1.5,4.25,-5>
+            object {
+                window_slot_big
+                translate y*4.25
             }
-            box {
-                <0,3,-4.5>,<1.5,1.25,-5>
+            object {
+                window_slot_small
+                translate y*1.25
             }
             
-            //texture {c_wall_roof}
+        }
+        #declare window_fill_small = box {
+            <0,0,0>,<1.5,1.75,-0.2>
+            texture {c_window}
+        }
+        #declare window_fill_big = box {
+            <0,0,0>,<1.5,2.25,-0.2>
+            texture {c_window}
         }
         #declare window_fills = union {
-            box {
-                <0,9.5,-4.5>,<1.5,7.75,-4.75>
+            object {
+                window_fill_small
+                translate y*7.75
             }
-            box {
-                <0,6.5,-4.5>,<1.5,4.25,-4.75>
+            object {
+                window_fill_big
+                translate y*4.25
             }
-            box {
-                <0,3,-4.5>,<1.5,1.25,-4.75>
+            object {
+                window_fill_small
+                translate y*1.25
             }
-            texture {c_wall_alt}
-            //todo: fix dem fills because wtf
         }
+        
+        
         //x-aligned walls
         union {
             difference {
@@ -166,12 +193,12 @@ union {
                 //wijndow slot prep
                 object {
                     window_slots
-                    translate x*5.5
+                    translate <5.5,0,-4.75>
                 }
             }
             object {
                 window_fills
-                translate x*5.5
+                translate <5.5,0,-4.75>
             }
         }
         union {
