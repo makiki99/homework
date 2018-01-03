@@ -3,8 +3,8 @@
 
 #declare cam = array[1]{
     camera {
-        location <10,10,-30>
-        look_at <5,10,0>
+        location <22,6,-30>
+        look_at <-22,6,0>
     }
 }
 
@@ -27,7 +27,14 @@ camera {cam[0]}
 }
 #declare c_metal = texture {pigment {rgb <0.1, 0.1, 0.1>}}
 #declare c_grass = texture {pigment {rgb <0.1, 0.1, 0.1>}}
-#declare c_window = texture {pigment {rgb <0, 1, 1>}}
+#declare c_window = texture {
+    pigment {rgb <0.2, 0.4, 0.4>}
+    finish {
+        diffuse 1
+        reflection 0.15
+    }
+}
+#declare c_window_alt = texture {pigment {rgb <0.09, 0.02, 0.>}}
 
 
 sphere {<0,0,0>,10000 pigment {color Blue}}
@@ -125,14 +132,81 @@ union {
         translate <2,0,-5>
     }
     union {
-    
-    
         //important definitions
         #declare window_slot_small = box {
             <0,0,0>,<1.5,1.75,-0.5>
         }
         #declare window_slot_big = box {
             <0,0,0>,<1.5,2.25,-0.5>
+        }
+        
+        #declare window_fill_small = union {
+            difference {
+                box {
+                    <0,0,0>,<1.5,1.75,-0.25>
+                    texture {c_wall_alt}
+                }
+                box {
+                    <0.08,0.08,0.1>,<1.42,1.67,-0.35>
+                    texture {c_wall_alt}
+                }
+            }
+            box {
+                <0.08,0.08,0>,<1.42,2.17,-0.20>
+                texture {c_window}
+            }
+            #for (i,0,5,1)
+                box {
+                    <0.08,0.06+i/5*1.59,0>,<1.42,0.10+i/5*1.59,-0.24>
+                    texture {c_window_alt}
+                }
+            #end
+            #for (i,0,4,1)
+                box {
+                    #if (i=2)
+                        <0.02+i/4*1.34,0.08,0>,<0.14+i/4*1.34,1.67,-0.24>
+                    #else
+                        <0.06+i/4*1.34,0.08,0>,<0.1+i/4*1.34,1.67,-0.24>
+                    #end
+                    texture {c_window_alt}
+                }
+            #end
+        }
+        #declare window_fill_big = union {
+            difference {
+                box {
+                    <0,0,0>,<1.5,2.25,-0.25>
+                    texture {c_wall_alt}
+                }
+                box {
+                    <0.08,0.08,0.1>,<1.42,2.17,-0.35>
+                    texture {c_window_alt}
+                }
+            }
+            box {
+                <0.08,0.08,0>,<1.42,2.17,-0.23>
+                texture {c_window}
+            }
+            #for (i,0,6,1)
+                box {
+                    #if (i=3) 
+                        <0.08,0.02+i/6*2.09,0>,<1.42,0.14+i/6*2.09,-0.24>
+                    #else 
+                        <0.08,0.06+i/6*2.09,0>,<1.42,0.10+i/6*2.09,-0.24>
+                    #end
+                    texture {c_window_alt}
+                }
+            #end
+            #for (i,0,4,1)
+                box {
+                    #if (i=2)
+                        <0.02+i/4*1.34,0.08,0>,<0.14+i/4*1.34,2.17,-0.24>
+                    #else
+                        <0.06+i/4*1.34,0.08,0>,<0.1+i/4*1.34,2.17,-0.24>
+                    #end
+                    texture {c_window_alt}
+                }
+            #end
         }
         #declare window_slots = union {
             object {
@@ -149,14 +223,6 @@ union {
             }
             
         }
-        #declare window_fill_small = box {
-            <0,0,0>,<1.5,1.75,-0.2>
-            texture {c_window}
-        }
-        #declare window_fill_big = box {
-            <0,0,0>,<1.5,2.25,-0.2>
-            texture {c_window}
-        }
         #declare window_fills = union {
             object {
                 window_fill_small
@@ -171,8 +237,7 @@ union {
                 translate y*1.25
             }
         }
-        
-        
+        //end of definition hell
         //x-aligned walls
         union {
             difference {
@@ -195,16 +260,42 @@ union {
                     window_slots
                     translate <5.5,0,-4.75>
                 }
+                object {
+                    window_slots
+                    translate <8,0,-4.75>
+                }
             }
             object {
                 window_fills
                 translate <5.5,0,-4.75>
             }
+            object {
+                window_fills
+                translate <8,0,-4.75>
+            }
         }
         union {
-            box {
-                <0,0,1>,<5,10,-6>
-                texture {c_wall}
+            difference {
+                box {
+                    <0,0,1>,<5,10,-6>
+                    texture {c_wall}
+                }
+                object {
+                    window_slots
+                    translate <0.5,0,-5.75>
+                }
+                object {
+                    window_slots
+                    translate <3,0,-5.75>
+                }
+            }
+            object {
+                window_fills
+                translate <0.5,0,-5.75>
+            }
+            object {
+                window_fills
+                translate <3,0,-5.75>
             }
             prism {
                 0,25,4
@@ -217,10 +308,24 @@ union {
             translate x*10
         }
         union {
-            box {
-                <0,0,1>,<15,10,-5.5>
-                texture {c_wall}
+            difference {
+                box {
+                    <0,0,1>,<15,10,-5.5>
+                    texture {c_wall}
+                }
+                #for (i,0,4,1)
+                    object {
+                        window_slots
+                        translate <0.5+3.1*i,0,-5.25>
+                    }
+                #end
             }
+            #for (i,0,4,1)
+                object {
+                    window_fills
+                    translate <0.5+3.1*i,0,-5.25>
+                }
+            #end
             prism {
                 2.75,6,4
                 <0,0>,<0,5>,<2,2.5>,<0,0>
@@ -232,9 +337,35 @@ union {
             translate x*15
         }
         union {
-            box {
-                <0,0,1>,<5,10,-6>
-                texture {c_wall}
+            difference {
+                box {
+                    <0,0,1>,<5,10,-6>
+                    texture {c_wall}
+                }
+                object {
+                    window_slot_small
+                    translate <0.5,7.75,-5.75>
+                }
+                object {
+                    window_slot_big
+                    translate <0.5,4.25,-5.75>
+                }
+                object {
+                    window_slots
+                    translate <3,0,-5.75>
+                }
+            }
+            object {
+                window_fill_small
+                translate <0.5,7.75,-5.75>
+            }
+            object {
+                window_fill_big
+                translate <0.5,4.25,-5.75>
+            }
+            object {
+                window_fills
+                translate <3,0,-5.75>
             }
             prism {
                 2.75,6,4
@@ -249,11 +380,46 @@ union {
         }
     }
     union {
+        #declare window_slots = union {
+            object {
+                window_slot_big
+                translate y*4.25
+            }
+            object {
+                window_slot_small
+                translate y*1.25
+            }
+            
+        }
+        #declare window_fills = union {
+            object {
+                window_fill_big
+                translate y*4.25
+            }
+            object {
+                window_fill_small
+                translate y*1.25
+            }
+        }
         //unaligned walls
         union {
-            box {
-                <0,0,0>,<15,8,5>
-                texture {c_wall}
+            difference {
+                box {
+                    <0,0,0>,<15,8,5>
+                    texture {c_wall}
+                }
+                #for (i,0,2,1)
+                    object {
+                        window_slots
+                        rotate y*180
+                        translate <7.5+i*1.75,0,4.75>
+                    }
+                #end
+                object {
+                    window_slots
+                    rotate y*180
+                    translate <13.75,0,4.75>
+                }
             }
             prism {
                 0,-15,4
@@ -262,13 +428,32 @@ union {
                 rotate z*90
                 translate y*8
             }
+            #for (i,0,2,1)
+                object {
+                    window_fills
+                    rotate y*180
+                    translate <7.5+i*1.75,0,4.75>
+                }
+            #end
+            object {
+                window_fills
+                rotate y*180
+                translate <13.75,0,4.75>
+            }
             rotate y*135
             translate <0,0,0>
         }
         union {
-            box {
-                <0,0,0>,<10,8,5.5>
-                texture {c_wall}
+            difference {
+                box {
+                    <0,0,0>,<10,8,5.5>
+                    texture {c_wall}
+                }
+                object {
+                    window_slots
+                    rotate y*180
+                    translate <2,0,5.25>
+                }
             }
             prism {
                 0,-10,4
