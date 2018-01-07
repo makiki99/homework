@@ -3,8 +3,8 @@
 
 #declare cam = array[1]{
     camera {
-        location <10,10,-10>
-        look_at <0,10,0>
+        location <10,15,-10>
+        look_at <0,15,0>
     }
 }
 
@@ -26,20 +26,54 @@ camera {cam[0]}
     pigment{
         gradient y
         color_map {
-            [],
-            [],
-            []
+            [0.1 color rgb <0.1,0,0>]
+            [0.9 color rgb <0.45,0,0>]
+            //[0.9 color rgb <0.1,0,0>]
         }
         scallop_wave
         scale 0.2
     }
-    normal {
+}
+texture {
+    pigment{
         gradient z
+        color_map {
+            [0.0 color rgbt <0,0,0,1>]
+            [0.99 color rgbt <0,0,0,1>]
+            [0.995 color rgbt <0,0,0,0>]
+            //[0.9 color rgb <0.1,0,0>]
+        }
+        scallop_wave
+        scale 0.4
+    }
+}
+
+#declare c_roof_cone = texture {
+    pigment{
+        gradient y
+        color_map {
+            [0.1 color rgb <0.1,0,0>]
+            [0.9 color rgb <0.45,0,0>]
+            //[0.9 color rgb <0.1,0,0>]
+        }
         scallop_wave
         scale 0.2
     }
-    //finish {diffuse 0.5}
 }
+texture {
+    pigment{
+        gradient z
+        color_map {
+            [0.0 color rgbt <0,0,0,1>]
+            [0.99 color rgbt <0,0,0,1>]
+            [0.995 color rgbt <0,0,0,0>]
+            //[0.9 color rgb <0.1,0,0>]
+        }
+        scallop_wave
+        scale 0.4
+    }
+}
+
 #declare c_metal = texture {pigment {rgb <0.1, 0.1, 0.1>}}
 #declare c_grass = texture {pigment {rgb <0.1, 0.1, 0.1>}}
 #declare c_window = texture {
@@ -77,30 +111,30 @@ union {
             0,1,5,
             <-2.5,-2.5>,<2.5,-2.5>,<2.5,2.5>,<-2.5,2.5>,<-2.5,-2.5>
             scale <1,2,1>
-            rotate x*180 
+            rotate x*180
             translate <2.5,12,-2.5>
-            texture {c_roof} 
+            texture {c_roof}
         }
         translate <-2,0,1>
     }
     union {
-        //tower 
+        //tower
         cylinder {
-            <0,0,0>, <0,9.75,0>, 3 
+            <0,0,0>, <0,9.75,0>, 3
             texture {c_wall}
         }
         cylinder {
-            <0,9.75,0>, <0,10,0>, 3.01 
+            <0,9.75,0>, <0,10,0>, 3.01
             texture {c_wall_alt}
         }
         difference {
             cylinder {
-                <0,10,0>, <0,13,0>, 3 
+                <0,10,0>, <0,13,0>, 3
                 texture {c_wall}
             }
         }
         cylinder {
-            <0,13,0>, <0,13.25,0>, 3.03 
+            <0,13,0>, <0,13.25,0>, 3.03
             texture {c_wall_alt}
         }
         cone {
@@ -128,7 +162,7 @@ union {
                 cylinder {
                     <-15,17.4,0>,<15,17.45,0>,0.33
                     rotate y*90*i+y*45
-                }    
+                }
             #end
         }
         cone {
@@ -156,7 +190,7 @@ union {
         #declare window_slot_big = box {
             <0,0,0>,<1.5,2.25,-0.5>
         }
-        
+
         #declare window_fill_small = union {
             difference {
                 box {
@@ -206,9 +240,9 @@ union {
             }
             #for (i,0,6,1)
                 box {
-                    #if (i=3) 
+                    #if (i=3)
                         <0.08,0.02+i/6*2.09,0>,<1.42,0.14+i/6*2.09,-0.24>
-                    #else 
+                    #else
                         <0.08,0.06+i/6*2.09,0>,<1.42,0.10+i/6*2.09,-0.24>
                     #end
                     texture {c_window_alt}
@@ -238,7 +272,7 @@ union {
                 window_slot_small
                 translate y*1.25
             }
-            
+
         }
         #declare window_fills = union {
             object {
@@ -350,7 +384,7 @@ union {
                 rotate z*90
                 rotate y*270
                 translate y*10
-            }        
+            }
             translate x*15
         }
         union {
@@ -406,7 +440,7 @@ union {
                 window_slot_small
                 translate y*1.25
             }
-            
+
         }
         #declare window_fills = union {
             object {
@@ -521,7 +555,7 @@ union {
                     window_slots
                     rotate y*180
                     translate <2.25,0,4.75>
-                }        
+                }
                 object {
                     window_slot_big
                     rotate y*180
@@ -532,7 +566,7 @@ union {
                 window_fills
                 rotate y*180
                 translate <2.25,0,4.75>
-            }        
+            }
             object {
                 window_fill_big
                 rotate y*180
@@ -549,7 +583,7 @@ union {
             translate <15*cosd(-135)+10*cosd(-125),0,15*sind(-135)+10*sind(-125)>
         }
         union {
-            difference {                            
+            difference {
                 box {
                     <0,0,-0.5>,<8,8,6>
                     texture {c_wall}
