@@ -1,7 +1,7 @@
 #include "colors.inc"
 #include "math.inc"
 
-#declare cam = array[3]{
+#declare cam = array[6]{
     camera {
         location <15,10,-70>
         look_at <-2,7,0>
@@ -13,6 +13,18 @@
     camera {
         location <60,15,-10>
         look_at <0,5,0>
+    },
+    camera {
+        location <-20,7,-60>
+        look_at <0,7,0>
+    },
+    camera {
+        location <0,50,-70>
+        look_at <0,0,0>
+    },
+    camera {
+        location <8,10,-25>
+        look_at <-10,1,0>
     }
 }
 
@@ -23,22 +35,24 @@ global_settings { ambient_light <1,1,1> }
     0 - front
     1 - tyl
     2 - z prawej
+    3 - z lewej
+    4 - z gory
+    5 - zblizenie
 */
-camera {cam[1]}
+camera {cam[5]}
 
 //kolorki/tekstury
 #declare c_wall = texture {
-    pigment {rgb <1.000, 0.871, 0.678>}
-    normal {pigment_pattern{wrinkles turbulence 0.2 scale 0.5},0.06}
+    pigment {rgb <1.000, 0.871, 0.378>}
+    normal {pigment_pattern{wrinkles turbulence 0.4 scale 0.5},0.16}
 }
 #declare c_wall_alt = texture {pigment {rgb <1, 1, 1>}}
 #declare c_roof = texture {
     pigment{
         gradient y
         color_map {
-            [0.1 color rgb <0.1,0,0>]
-            [0.9 color rgb <0.45,0,0>]
-            //[0.9 color rgb <0.1,0,0>]
+            [0.1 color rgb <0.1,0.025,0>]
+            [0.9 color rgb <0.45,0.15,0>]
         }
         scallop_wave
         scale 0.2
@@ -51,7 +65,6 @@ texture {
             [0.0 color rgbt <0,0,0,1>]
             [0.99 color rgbt <0,0,0,1>]
             [0.995 color rgbt <0,0,0,0>]
-            //[0.9 color rgb <0.1,0,0>]
         }
         scallop_wave
         scale 0.4
@@ -62,27 +75,13 @@ texture {
     pigment{
         gradient y
         color_map {
-            [0.1 color rgb <0.1,0,0>]
-            [0.9 color rgb <0.45,0,0>]
-            //[0.9 color rgb <0.1,0,0>]
+            [0.1 color rgb <0.1,0.025,0>]
+            [0.9 color rgb <0.45,0.15,0>]
         }
         scallop_wave
         scale 0.2
     }
 }
-/* texture {
-    pigment{
-        gradient z
-        color_map {
-            [0.0 color rgbt <0,0,0,1>]
-            [0.99 color rgbt <0,0,0,1>]
-            [0.995 color rgbt <0,0,0,0>]
-            //[0.9 color rgb <0.1,0,0>]
-        }
-        scallop_wave
-        scale 0.4
-    }
-} */
 
 #declare c_metal = texture {
   pigment {rgb <0.1, 0.1, 0.1>}
@@ -108,16 +107,64 @@ texture {
 }
 #declare c_window_alt = texture {pigment {rgb <0.09, 0.02, 0.>}}
 
+sky_sphere{
+ pigment{ gradient y
+   color_map{
+   [0.0 color rgb<1,1,1> ]
+   [0.3 color rgb<0.18,0.28,0.75>*0.8]
+   [1.0 color rgb<0.15,0.28,0.75>*0.5]}
+   scale 1.05
+   translate<0,-0.05,0>
+ }
+}
 
-sphere {<0,0,0>,10000 pigment {color Blue}}
+#declare R_planet = 6000000;
+#declare R_sky    = R_planet + 2000;
+sphere{ <0, -R_planet, 0>, R_sky hollow
+  texture{
+     pigment{ bozo turbulence 0.75
+              octaves 6  omega 0.7
+              lambda 2  phase 0.15
+         color_map {
+         [0.00 color rgb <1,1,1>*0.95]
+         [0.05 color rgb <1,1,1>*1.25]
+         [0.15 color rgb <1,1,1>*0.85]
+         [0.55 color rgbt<1,1,1,1>]
+         [1.00 color rgbt<1,1,1,1>]
+       }
+       translate< 3, 0,-1>
+       scale<0.3, 0.4, 0.2>*3
+     }
+     finish{emission 1 diffuse 0}
+     scale 3000
+  }
+
+ }
+ 
 light_source {
-    <100,1250,-250>,
+    <3500000,9000000,-7500000>,
     White
 }
 
 plane {
+//grass
     y, 0
-    pigment {color Gray}
+    pigment{
+        bozo scale 0.15 turbulence 0.05
+        color_map{
+            [0.0 color rgb <0,0.5,0>]
+            [1.0 color rgb <0,0.15,0.>]
+        }
+    }
+    normal {
+        pigment_pattern{
+            bozo scale 0.01 turbulence 0.05
+            color_map{
+                [0.0 color rgb <1,1,1>]
+                [1.0 color rgb <0.5,0.5,0.5>]
+            }
+        }
+    }
 }
 
 #declare window_slot_small = box {
@@ -324,7 +371,6 @@ union {
     }
     union {
         //important definitions
-
         #declare window_slots = union {
             object {
                 window_slot_small
@@ -665,6 +711,14 @@ union {
                     rotate y*180
                     translate <13.75,0,4.75>
                 }
+                #for (i,0,3,1)
+                object {
+                    window_slot_big
+                    scale z*-1
+                    rotate y*180
+                    translate <5.5+i*3,4.25,0.25>
+                }
+                #end
             }
             prism {
                 0,-15,4
@@ -678,6 +732,14 @@ union {
                     window_fills
                     rotate y*180
                     translate <7.5+i*1.75,0,4.75>
+                }
+            #end
+            #for (i,0,3,1)
+                object {
+                    window_fill_big
+                    scale z*-1
+                    rotate y*180
+                    translate <5.5+i*3,4.25,0.25>
                 }
             #end
             object {
@@ -711,6 +773,14 @@ union {
                         translate <6.5+i*1.75,0,5.25>
                     }
                 #end
+                #for (i,0,2,1)
+                    object {
+                        window_slot_big
+                        scale z*-1
+                        rotate y*180
+                        translate <3.5+i*3,4.25,0.25>
+                    }
+                #end
             }
             object {
                 window_fill_big
@@ -727,6 +797,14 @@ union {
                     window_fills
                     rotate y*180
                     translate <6.5+i*1.75,0,5.25>
+                }
+            #end
+            #for (i,0,2,1)
+                object {
+                    window_fill_big
+                    scale z*-1
+                    rotate y*180
+                    translate <3.5+i*3,4.25,0.25>
                 }
             #end
             prism {
@@ -755,6 +833,12 @@ union {
                     rotate y*180
                     translate <4.5,4.25,4.75>
                 }
+                object {
+                    window_slot_big
+                    scale z*-1
+                    rotate y*180
+                    translate <4,4.25,0.75>
+                }
             }
             object {
                 window_fills
@@ -765,6 +849,12 @@ union {
                 window_fill_big
                 rotate y*180
                 translate <4.5,4.25,4.75>
+            }
+            object {
+                window_fill_big
+                scale z*-1
+                rotate y*180
+                translate <4,4.25,0.75>
             }
             prism {
                 0,-6,4
