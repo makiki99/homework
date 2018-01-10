@@ -1,5 +1,6 @@
 #include "colors.inc"
 #include "math.inc"
+#include "woods.inc"
 
 #declare cam = array[6]{
     camera {
@@ -39,7 +40,7 @@ global_settings { ambient_light <1,1,1> }
     4 - z gory
     5 - zblizenie
 */
-camera {cam[5]}
+camera {cam[1]}
 
 //kolorki/tekstury
 #declare c_wall = texture {
@@ -158,10 +159,10 @@ plane {
     }
     normal {
         pigment_pattern{
-            bozo scale 0.01 turbulence 0.05
+            bozo scale 0.01 turbulence 0.125
             color_map{
                 [0.0 color rgb <1,1,1>]
-                [1.0 color rgb <0.5,0.5,0.5>]
+                [1.0 color rgb <0.0,0.0,0.0>]
             }
         }
     }
@@ -241,6 +242,29 @@ plane {
             texture {c_window_alt}
         }
     #end
+}
+
+#declare door_slot = box{
+    <0,0,0>,<1.5,3,-0.5>
+}
+#declare door_fill = union {
+    difference {
+        box{
+            <0,0,0>,<1.5,3,-0.25>
+            texture{c_wall_alt}
+        }
+        box {<0.1,0,0>,<1.4,2.9,-0.5>}
+    }
+    box{
+        <0,0,0>,<1.5,3,-0.22>
+        texture{ T_Wood1
+            pigment {color rgb <0.07,0.0,0.0>}     
+            normal { wood 1 scale 0.05}
+            finish { phong 1 } 
+            rotate<0,0,0>
+            scale 0.5
+        }
+    }
 }
 
 union {
@@ -602,6 +626,10 @@ union {
                     translate <0.5,4.25,-5.75>
                 }
                 object {
+                    door_slot
+                    translate <0.5,0,-5.75>
+                }
+                object {
                     window_slot_small
                     translate <3,1.25,-5.75>
                 }
@@ -625,6 +653,10 @@ union {
                     translate <-3.5,4.25,-0.75>
                     rotate y*180
                 }
+            }
+            object {
+                door_fill
+                translate <0.5,0,-5.75>
             }
             object {
                 window_fill_small
@@ -764,7 +796,7 @@ union {
                 object {
                     window_slot_big
                     rotate y*180
-                    translate <1.74,4.25,5.25>
+                    translate <1.75,4.25,5.25>
                 }
                 #for (i,0,2,1)
                     object {
@@ -781,6 +813,16 @@ union {
                         translate <3.5+i*3,4.25,0.25>
                     }
                 #end
+                object {
+                    door_slot
+                    rotate y*180
+                    translate <4.125,0,5.25>
+                }
+                object {
+                    door_slot
+                    rotate y*180
+                    translate <1.75,0,5.25>
+                }
             }
             object {
                 window_fill_big
@@ -807,6 +849,16 @@ union {
                     translate <3.5+i*3,4.25,0.25>
                 }
             #end
+            object {
+                door_fill
+                rotate y*180
+                translate <4.125,0,5.25>
+            }
+            object {
+                door_fill
+                rotate y*180
+                translate <1.75,0,5.25>
+            }
             prism {
                 0,-10,4
                 <0,0>,<0,5.5>,<2,2.75>,<0,0>
@@ -834,6 +886,11 @@ union {
                     translate <4.5,4.25,4.75>
                 }
                 object {
+                    door_slot
+                    rotate y*180
+                    translate <4.5,0,4.75>
+                }
+                object {
                     window_slot_big
                     scale z*-1
                     rotate y*180
@@ -855,6 +912,11 @@ union {
                 scale z*-1
                 rotate y*180
                 translate <4,4.25,0.75>
+            }
+            object {
+                door_fill
+                rotate y*180
+                translate <4.5,0,4.75>
             }
             prism {
                 0,-6,4
